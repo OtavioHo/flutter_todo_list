@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'Task.dart';
+import 'package:flutter_todo_list/tabBar.dart';
+import 'package:flutter_todo_list/Task.dart';
 
 class TaskList extends StatefulWidget {
+  const TaskList({Key key, this.taskList}) : super(key: key);
+
+  final List<Task> taskList;
+
   @override
   TaskListState createState() => new TaskListState();
 }
 
 class TaskListState extends State<TaskList> {
-  final List<Task> _tasks = [
-    new Task('um', new DateTime(2019), false),
-    new Task('dois', new DateTime(2019), false),
-    new Task('tres', new DateTime(2019), false),
-    new Task('quatro', new DateTime(2019), false)
-  ];
+  final Set<int> _openned = new Set<int>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
@@ -24,32 +24,73 @@ class TaskListState extends State<TaskList> {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-          final index = i ~/ 2; /*3*/
-          if (index < _tasks.length) {
-            return _buildRow(_tasks[index], index);
+          if (i < widget.taskList.length) {
+            return _buildRow(widget.taskList[i], i);
           }
         });
   }
 
   Widget _buildRow(Task _task, int index) {
-    return ListTile(
-      title: Text(
-        _task.getTitle(),
-        style: _biggerFont,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconButton(
+              icon: Icon(_task.getCompleted()
+                  ? Icons.check_box
+                  : Icons.check_box_outline_blank),
+              onPressed: () => Tabs.of(context).setState(() => _task.done()),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(_task.title,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0)),
+                    IconButton(
+                      icon: Icon(_task.isOpen()
+                          ? Icons.arrow_drop_up
+                          : Icons.arrow_drop_down),
+                      onPressed: () {
+                        Tabs.of(context).setState(() {
+                          _task.openInfo();
+                        });
+                      },
+                    )
+                  ],
+                ),
+                _taskInfo(_task),
+              ],
+            )
+          ],
+        ),
       ),
-      trailing: new Icon(_task.getCompleted()
-          ? Icons.check_box
-          : Icons.check_box_outline_blank),
-      onTap: () {
-        setState(() {
-          if (_task.getCompleted()) {
-            _task.setCompleted(false);
-          } else {
-            _task.setCompleted(true);
-          }
-        });
-      },
     );
+  }
+
+  Widget _taskInfo(Task _task) {
+    if (_task.isOpen()) {
+      return Column(
+        children: <Widget>[
+          Text(_task.description),
+          RaisedButton(
+            onPressed: () => print('done'),
+            child: Text('done'),
+          )
+        ],
+      );
+    }
+    return Text('subtitulo');
+  }
+
+  bool isOpenned(index) {
+    return _openned.contains(index);
   }
 }
