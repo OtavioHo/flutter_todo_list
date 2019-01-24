@@ -78,16 +78,24 @@ class TaskListState extends State<TaskList> {
   Widget _taskInfo(Task _task) {
     if (_task.isOpen()) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
-          Text(_task.description),
+          Text(
+            _task.description,
+            overflow: TextOverflow.ellipsis,
+          ),
           RaisedButton(
-            onPressed: () => print('done'),
-            child: Text('done'),
+            onPressed: () => print('edit'),
+            child: Text('edit'),
           )
         ],
       );
     }
-    return Text('subtitulo');
+    String date = _task.date.toString();
+    String year = date.split('-')[0];
+    String month = date.split('-')[1];
+    String day = date.split('-')[2].split(' ')[0];
+    return Text(day + '/' + month + '/' + year);
   }
 
   bool isOpenned(index) {

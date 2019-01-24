@@ -38,9 +38,7 @@ class NewTaskState extends State<NewTask> {
             children: [
               TextFormField(
                 decoration: InputDecoration(
-                    icon: Icon(Icons.text_fields),
-                    hintText: 'Task title',
-                    labelText: 'Title'),
+                    icon: Icon(Icons.text_fields), labelText: 'Title'),
                 controller: titleControler,
               ),
               TextFormField(
